@@ -1,6 +1,6 @@
 # SQL-Projects--JetBrains
 
-## SQL Project from Hperskill by JetBrains
+## SQL Project from Hyperskill by JetBrains
 
 
 ### Project:
@@ -10,6 +10,14 @@
 - You need to recover the annual scores of the students.
 - The school management provides the data from the archive, and the Science Club members help you with csv files. 
 - Your task is to create the school database and calculate the annual score.
+
+The following datasets are available as follows
+
+- person.csv 
+- teacher.csv 
+- score1.csv 
+- score2.csv 
+- score3.csv
 
 
 Note: 
