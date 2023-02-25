@@ -1,0 +1,218 @@
+												-- Hacker Attack (SQLite)
+
+.print " The following data is available person.csv teacher.csv score1.csv score2.csv score3.csv "
+.print "------"
+.print "Creating person table"
+
+CREATE TABLE "person"(							--  Person Table created						
+  "person_id" VARCHAR(9) PRIMARY KEY,
+  "full_name" TEXT,
+  "address" TEXT,
+  "building_number" TEXT,
+  "phone_number" TEXT
+);
+.print "------"
+.print " Show table schema"
+
+PRAGMA table_info(person);
+.print "------"
+.print " Importing CSV file into table.......   Done"
+
+.mode csv		
+.import --skip 1 person.csv person
+.mode column
+
+.print "------"
+.print " Showing person table"
+.print "------"
+
+SELECT person_id, full_name FROM person
+ORDER BY person_id
+LIMIT 5;
+
+.print "------ "
+.print "Now creating Teacher table.........   Done"
+.print "------"
+
+CREATE TABLE "teacher"(
+  "person_id" VARCHAR(9) PRIMARY KEY,
+  "class_code" TEXT
+);
+.print "Importing CSV file into teacher table.......   Done"
+.mode csv
+.import --skip 1 teacher.csv teacher
+.mode column
+
+.print "------"
+.print "Selecting every record from the person table that is missing in the teacher table. This will give the students list"
+.print "------"
+
+SELECT person_id, full_name FROM person
+WHERE
+person_id not in
+(SELECT person_id FROM teacher)
+ORDER BY full_name LIMIT 5;
+
+.print "------"
+.print "Showing count"
+
+SELECT COUNT(person_id) FROM person
+WHERE
+person_id not in
+(SELECT person_id FROM teacher);
+
+.print "------"
+.print "creating the student table and fill it with student data.............."
+.print "------"
+
+CREATE TABLE student(
+    person_id VARCHAR(9) PRIMARY KEY,
+    grade_code TEXT
+);
+.print "...........Done"
+
+INSERT INTO
+    student(person_id)
+SELECT person_id FROM person
+WHERE
+person_id not in
+(SELECT person_id FROM teacher);
+
+.print " |student - 5 rows| "
+SELECT * FROM student
+ORDER BY person_id ASC
+LIMIT 5;
+
+.print "Create three tables. With the name score1, score2, and score3"
+.print "------ "
+
+CREATE TABLE score1(
+   "person_id" VARCHAR(9),
+   "score" INTEGER
+);
+
+CREATE TABLE score2(
+   "person_id" VARCHAR(9),
+   "score" INTEGER
+);
+
+CREATE TABLE score3(
+   "person_id" VARCHAR(9),
+   "score" INTEGER
+);
+
+
+.print "Importing score1 , score2 and score3 CSV files into respective tables"
+.print "------"
+
+.mode csv
+.import --skip 1 score1.csv score1
+.import --skip 1 score2.csv score2
+.import --skip 1 score3.csv score3
+.mode column
+
+.print "Selecting all the data from the score tables and merge them together with the UNION ALL command"
+.print "------"
+
+SELECT * FROM score1
+UNION ALL
+SELECT * FROM score2
+UNION ALL
+SELECT * FROM score3 LIMIT 5;
+
+.print "Creating Score table.........."
+CREATE TABLE score(
+   "person_id" VARCHAR(9),
+   "score" INTEGER
+);
+
+.print "...............Done"
+.print "------"
+.print "Inserting the scores into the score table..........."
+
+INSERT INTO
+    score(person_id,score)
+SELECT * FROM score1
+UNION ALL
+SELECT * FROM score2
+UNION ALL
+SELECT * FROM score3;
+
+.print "------"
+.print "Deleting score1, score2, and score3 tables with the DROP command................"
+
+DROP TABLE score1;
+DROP TABLE score2;
+DROP TABLE score3;
+
+.print "........Done"
+.print "------"
+
+.print "If there is no score in the score table, the grade code is GD-09"
+.print "If the score count is 1 in the score table, the grade code is GD-10"
+.print "If the score count is 2 in the score table, the grade code is GD-11"
+.print "If the score count is 3 in the score table, the grade code will be GD-12"
+.print "------"
+
+UPDATE student
+SET grade_code = "GD-09"
+WHERE student.person_id not in
+    (SELECT person_id FROM score
+    GROUP BY person_id
+    ORDER BY person_id);
+
+UPDATE student
+SET grade_code = "GD-10"
+WHERE student.person_id in
+    (SELECT person_id FROM score
+    GROUP BY person_id
+    HAVING count(score) = 1
+    ORDER BY person_id);
+
+UPDATE student
+SET grade_code = "GD-11"
+WHERE student.person_id in
+    (SELECT person_id FROM score
+    GROUP BY person_id
+    HAVING count(score) = 2
+    ORDER BY person_id);
+
+UPDATE student
+SET grade_code = "GD-12"
+WHERE student.person_id in
+    (SELECT person_id FROM score
+    GROUP BY person_id
+    HAVING count(score) = 3
+    ORDER BY person_id);
+
+.print "Updating Students Grade code column.............Done"
+.print "   |student - 5 rows|  "
+
+SELECT * FROM student
+ORDER BY person_id
+LIMIT 5;
+
+.print "------"
+.print "Calculating the average score for the last-year students who have grade code GD-12 in the student table "
+.print "------"
+.print "   |Average|  "
+SELECT person_id,ROUND(AVG(score),2) as avg_score FROM score
+WHERE person_id in (SELECT person_id FROM student WHERE grade_code = "GD-12" GROUP BY person_id)
+GROUP BY person_id
+ORDER BY avg_score DESC;
+
+.print "----------------------------------------------------------------------------------------"
+.print "                           !!!!! Mission Accomplished !!!!!                             "
+
+
+
+
+
+
+
+
+
+
+
+
+
