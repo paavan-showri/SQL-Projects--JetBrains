@@ -14,6 +14,6 @@
 
 Note: 
 1. The code in "hacker_attack.txt" (from Code folder) can be run from SQlite CLI (Command Line Interface)
-2. Open sqlite command shell from a directory
+2. Open sqlite command shell from a directory in which datasets are saved
 3. Open empty database file preferrably (not mandatory) using command ```.open file_name.db ```
 4. Read the "hacker_attack.txt" file using command ```.read "desired_path/hacker_attack.txt" ```
