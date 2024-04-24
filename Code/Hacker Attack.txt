@@ -1,4 +1,4 @@
-												-- Hacker Attack (SQLite)
+									-- Hacker Attack (SQLite)
 
 .print " The following data is available person.csv teacher.csv score1.csv score2.csv score3.csv "
 .print "------"
